@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Development</title>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+        }
+        body{
+            text-align: center;
+        }
+        .but{
+            padding: 6px 20px;
+            border: 1px solid;
+            border-radius: 7px;
+            margin: 10px;
+        }
+        .but:hover{
+            color: coral;
+        }
+        .but:active{
+            background-color: black;
+            color: white;
+        }
+        #reset{
+            margin-top: 20px;
+            padding: 8px 100px;
+        }
+        #reset:hover{
+            color: red;
+        }
+        .txt{
+            margin-top: 10px;
+            font-size: 30px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bat Ball Stump Game</h1>
+    
+    <button id="bat" class="but"
+    onclick="
+        let userChoice = 'Bat';
+        let computerChoice = getComputerChoice();
+        let result = getResult(userChoice, computerChoice);
+        printResult(userChoice, computerChoice, result);
+    "
+    >Bat</button>
+
+    <button id="ball" class="but"
+    onclick="
+        userChoice = 'Ball';
+        computerChoice = getComputerChoice();
+        result = getResult(userChoice, computerChoice);
+        printResult(userChoice, computerChoice, result);
+    "
+    >Ball</button>
+
+    <button id="stump" class="but"
+    onclick="
+        userChoice = 'Stump';
+        computerChoice = getComputerChoice();
+        result = getResult(userChoice, computerChoice);
+        printResult(userChoice, computerChoice, result);
+    "
+    >Stump</button>
+
+    <div class="txt" id="userMove"></div>
+    <div class="txt" id="computerMove"></div>
+    <div class="txt" id="result"></div>
+    <div class="txt" id="score"></div>
+
+    <br>
+    <button class="but" id="reset" 
+    onclick="
+        localStorage.clear();
+        resetScore();
+    ">Reset</button>
+
+    <script>
+        let scoreStr = localStorage.getItem('Score');
+        let score;
+        resetScore(scoreStr);
+        function resetScore(scoreStr){
+            score = scoreStr ? JSON.parse(scoreStr) : {
+            won : 0,
+            lost : 0,
+            tie : 0,
+            };
+            score.displayScore = function(){
+            return (`Won : ${score.won}
+            Lost : ${score.lost}
+            Tie : ${score.tie}`);
+            }
+            printResult();
+        }
+        
+        function getComputerChoice(){
+            let randomNum = Math.random()*3;
+            if(randomNum<1){
+                return 'Bat';
+            }
+            else if(randomNum<2){
+                return 'Ball';
+            }
+            else{
+                return 'Stump';
+            }
+        }
+        function getResult(userMove, computerMove){
+            if(userMove === computerMove){
+                score.tie++;
+                return `It's a tie`;
+            }
+            else if((userMove==='Bat' && computerMove==='Ball') || (userMove==='Ball' && computerMove==='Stump') || (userMove==='Stump' && computerMove==='Bat')){
+                score.won++;
+                return 'Hurray! You won';
+            }
+            else{
+                score.lost++;
+                return 'Computer won';
+            }
+        }
+        function printResult(userMove, computerMove, result){
+            localStorage.setItem('Score',JSON.stringify(score));
+            document.querySelector('#userMove').innerText = userMove ? `You have chosen ${userMove}` : '';
+
+            document.querySelector('#computerMove').innerText =computerMove ? `Computer choice is ${computerMove}` : '';
+
+            document.querySelector('#result').innerText = result ? result : '';
+
+            document.querySelector('#score').innerText = score.displayScore();
+        }
+    </script>
+
+</body>
+</html>
